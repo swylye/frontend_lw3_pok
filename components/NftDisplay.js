@@ -7,6 +7,7 @@ export default function NftDisplay() {
 
     const { account } = useMoralis()
     const [nftImages, setNftImages] = useState([])
+    const [apiError, setApiError] = useState(false)
 
 
     async function getNfts() {
@@ -16,8 +17,17 @@ export default function NftDisplay() {
             const response = await res.json()
             const nftData = response.ownedNfts
             setNftImages(nftData.map(item => item.media[0].gateway.includes("/ipfs/") ? 'https://cloudflare-ipfs.com' + item.media[0].gateway.match(ipfsRegexPattern)[0] : item.media[0].gateway))
+            setApiError(false)
         }
-        catch (err) { console.log(err) }
+        catch (err) {
+            console.log(err)
+            setApiError(true)
+        }
+    }
+
+    const resetStates = () => {
+        setNftImages([])
+        setApiError(false)
     }
 
     const renderMedia = () => {
@@ -36,6 +46,7 @@ export default function NftDisplay() {
                             src={link}
                             className="max-w-sm h-auto"
                             key={index}
+                            alt="learnweb3 or buildspace proof of knowledge NFT"
                         />
                 )
             })
@@ -43,7 +54,9 @@ export default function NftDisplay() {
     }
 
     useEffect(() => {
-        account ? getNfts() : setNftImages([])
+        account
+            ? getNfts()
+            : resetStates()
     }, [account])
 
     return (
@@ -58,10 +71,14 @@ export default function NftDisplay() {
                             </div>
                         </div>
                     )
-                    : <div className="text-xl text-center pt-10">
-                        <p>Unfortunately this address does not have any of LearnWeb3 or Buildspace&apos;s proof of knowledge NFTs 😔</p>
-                        <p className="pt-5">But fret not, you can get some today by learning <a href="https://learnweb3.io/courses" className="underline underline-offset-2 text-blue-700 hover:font-medium">these courses</a> 👀</p>
-                    </div>
+                    : apiError
+                        ? (<div className="text-xl text-center pt-10">
+                            Unfortunately, there seems to be an API error. Please try again later 🙇
+                        </div>)
+                        : (<div className="text-xl text-center pt-10">
+                            <p>Unfortunately this address does not have any of LearnWeb3 or Buildspace&apos;s proof of knowledge NFTs 😔</p>
+                            <p className="pt-5">But fret not, you can get some today by learning <a href="https://learnweb3.io/courses" className="underline underline-offset-2 text-blue-700 hover:font-medium">these courses</a> 👀</p>
+                        </div>)
                 )
                 : <div className="text-xl text-center pt-10">Please connect your wallet to proceed by clicking on the top right button.</div>
             }
