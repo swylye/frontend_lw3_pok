@@ -25,10 +25,11 @@ export default function NftDisplay() {
             nftImages.map((link, index) => {
                 return (
                     link.includes(".mp4")
-                        ? <video controls autoplay="" loop muted
+                        ? <video controls autoPlay loop muted
                             src={link}
                             className="max-w-sm h-auto"
                             type="video/mp4"
+                            key={index}
                         />
                         :
                         <img
@@ -58,7 +59,7 @@ export default function NftDisplay() {
                         </div>
                     )
                     : <div className="text-xl text-center pt-10">
-                        <p>Unfortunately this address does not have any of LearnWeb3 or Buildspace's proof of knowledge NFTs 😔</p>
+                        <p>Unfortunately this address does not have any of LearnWeb3 or Buildspace&apos;s proof of knowledge NFTs 😔</p>
                         <p className="pt-5">But fret not, you can get some today by learning <a href="https://learnweb3.io/courses" className="underline underline-offset-2 text-blue-700 hover:font-medium">these courses</a> 👀</p>
                     </div>
                 )
